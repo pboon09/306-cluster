@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "Control/Auto/Arduino/Auto-Manipulator"
+		},
+		{
+			"path": "Control/Auto/Arduino/Auto-Mobile"
+		},
+		{
+			"path": "Control/Manual/Arduino/Manual-Manipulator"
+		},
+		{
+			"path": "Control/Manual/Arduino/Manual-Mobile"
+		}
+	],
+	"settings": {}
+}
