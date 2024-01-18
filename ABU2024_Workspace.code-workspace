@@ -11,6 +11,10 @@
 		},
 		{
 			"path": "Control/Manual/Arduino/Manual-Mobile"
+		},
+		{
+			"name": "240118-190154-arduino-blink",
+			"path": "../../../../Documents/PlatformIO/Projects/240118-190154-arduino-blink"
 		}
 	],
 	"settings": {}
