@@ -14,11 +14,12 @@ def LinetrackCam_Open():
 def BGR2BIN(frame,threshold = 95):
     # Create a copy of the frame and convert it to grayscale
     frame = cv2.GaussianBlur(frame,(23,23),cv2.BORDER_DEFAULT)
-    imgray_array = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2GRAY)
-    
-    max_value = 255        
-    _, binary_image = cv2.threshold(imgray_array, threshold, max_value, cv2.THRESH_BINARY)
+    frame = cv2.cvtColor(frame.copy() , cv2.COLOR_RGB2HSV)
+    h, s, v = cv2.split(frame)
+    max_value = 255  
+    _,binary_image = cv2.threshold(s,threshold,max_value,cv2.THRESH_BINARY_INV)
     return binary_image
+    
 
 def horizontal(x_pos,binrary_image):
     apos = 999
