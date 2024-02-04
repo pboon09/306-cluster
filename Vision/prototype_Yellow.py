@@ -16,27 +16,8 @@ while (cap.isOpened()):
         y = 100
         h, s, v = cv2.split(frame)
 
-        # imgray_array = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2GRAY)
-    
-        # max_value = 255        
-        # _, th1 = cv2.threshold(imgray_array, 95, max_value, cv2.THRESH_BINARY)
-
-        # th1 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 255, 0)
-        # th1 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 255, 0)
         thresh,th1 = cv2.threshold(s,50,255,cv2.THRESH_BINARY_INV)
-        # thresh,th1 = cv2.threshold(s,10,255,cv2.THRESH_OTSU)
-        # lower = np.array([0,0,0])
-        # upper = np.array([0,255,255])
-        # mask=cv2.inRange(th1,lower,upper)
-        # result = cv2.bitwise_and(frame,frame,mask=mask)
-        # gray = cv2.cvtColor(result,cv2.COLOR_BGR2GRAY)
-        # thresh,th2 = cv2.threshold(gray,75,255,cv2.THRESH_BINARY)
-        # kernel = np.ones((8,8),np.uint8)
 
-        # th1 = cv2.erode(th1,kernel,iterations=2)
-        # th1 = cv2.morphologyEx(th1,cv2.MORPH_OPEN,kernel,iterations=4)
-
-        # dot1 = (th1[y][x[0]]+th1[y][x[0]])
         cv2.imshow("original",frames)
         # cv2.imshow("Output",result)
         cv2.imshow("s",s)
