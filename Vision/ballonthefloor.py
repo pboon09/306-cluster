@@ -35,14 +35,32 @@ def color_detect_blue(bgr):
     else:
         return "Purple"
 
-def draw_rectangle(img, x, y, w, h, color):
+def draw_rectangle_Red(img, x, y, w, h, color):
     cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
-    # cv2.putText(frame, "blue Ball", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, color, 2)
-    
+    # cx = (x + (x + w)) / 2
+    # cy = (y + (y + h)) / 2
+    bottomLeftCornerOfText = (x, y)
+
+    position = (((x + (x + w)) / 2), ((y + (y + h)) / 2))
+    text = "red Ball x, y" + str(position)
+    cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+
+def draw_rectangle_blue(img, x, y, w, h, color):
+    cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
+
+    bottomLeftCornerOfText = (x, y)
+
+    position = (((x + (x + w)) / 2), ((y + (y + h)) / 2))
+    text = "Blue Ball x, y" + str(position)
+    cv2.putText(frame,"Blue" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+
+def calculate_distance(center1, center2):
+    return np.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
+
 def detect_circles(img):
     count = 0
     text = ""
-    bottomLeftCornerOfText = (0, 0)
+    # bottomLeftCornerOfText = (0, 0)
     
     # frame = cv2.imread(frame) # Read the image
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -53,12 +71,12 @@ def detect_circles(img):
     circles = cv2.HoughCircles(
         gray_blurred,
         cv2.HOUGH_GRADIENT,
-        dp=1.7,
-        minDist=135,
+        dp=1,
+        minDist=150,
         param1=50,
         param2=30,
-        minRadius=30, # 50
-        maxRadius=75 # 100
+        minRadius=125, # 50
+        maxRadius=250 # 100
     )
 
     if circles is not None:
@@ -67,11 +85,12 @@ def detect_circles(img):
         result = cv2.bitwise_and(frame, frame, mask=mask)
         for i in circles[0, :]:
             
+            
             cv2.circle(frame, (i[0], i[1]), i[2], (0, 255, 0), 2)
             cv2.circle(mask, (i[0], i[1]), i[2], 255, thickness=cv2.FILLED)
             if 0 <= i[0] < frame.shape[1] and 0 <= i[1] < frame.shape[0]:
                 center_pixel_color = frame[i[1], i[0]]
-                class_color = color_detect_red(center_pixel_color) # color_detect_blue(center_pixel_color)
+                class_color = color_detect_blue(center_pixel_color) # color_detect_blue(center_pixel_color)
                 print("RGB values at center of circle:", center_pixel_color, "Classified as:", class_color)
             
                 if class_color == "Red": # "Blue"
@@ -80,9 +99,16 @@ def detect_circles(img):
                     radius = i[2]
                     x, y = center[0] - radius, center[1] - radius
                     w, h = 2 * radius, 2 * radius
-                    draw_rectangle(frame, x, y, w, h, (0, 0, 255))
-                    bottomLeftCornerOfText = (x, y)
-                    text = "x,y" + str(bottomLeftCornerOfText)
+                    draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
+                    # bottomLeftCornerOfText = (x, y)
+                    # text = "x,y" + str(bottomLeftCornerOfText)
+                if class_color == "Blue": # "Blue"
+                    count += 1
+                    center = (i[0], i[1])
+                    radius = i[2]
+                    x, y = center[0] - radius, center[1] - radius
+                    w, h = 2 * radius, 2 * radius
+                    draw_rectangle_blue(frame, x, y, w, h, (0, 0, 255))
                     
                 
 
@@ -111,7 +137,7 @@ def detect_circles(img):
 
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return mask, count, text, bottomLeftCornerOfText
+    return mask, count, text
 
 
 
@@ -119,14 +145,19 @@ def detect_circles(img):
 cap = cv2.VideoCapture(0)  
 cap.set(cv2.CAP_PROP_EXPOSURE, 2) 
 while True:
-    ret, frame = cap.read()
+    ret, frame = cap.read() 
     if not ret:
         break
+    # center of frame
+    frame_center = (frame.shape[1] // 2, frame.shape[0] // 2)
+    cv2.circle(frame, (frame.shape[1] //2, frame.shape[0] // 2),2, (255, 255, 255), 1)
+
         
-    detect_circles(frame)
-    mask, count, text, bottomLeftCornerOfText = detect_circles(frame)
+    # detect_circles(frame)
+    mask, count, text = detect_circles(frame)
     cv2.putText(frame, f"total ={count}", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 255, 255), 5)
-    cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+    
+    # cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
     cv2.imshow('frame circles', frame)
     cv2.imshow('detected circles', mask)
 
