@@ -3,6 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 
+
+def calculate_distance(center1, center2):
+    distance = np.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
+    return distance
+
 def color_detect_red(bgr):
     
     red_lower = np.array([0, 0, 100])
@@ -36,7 +41,7 @@ def color_detect_blue(bgr):
         return "Purple"
 
 def draw_rectangle_Red(img, x, y, w, h, color):
-    cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
+    # cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
     # cx = (x + (x + w)) / 2
     # cy = (y + (y + h)) / 2
     bottomLeftCornerOfText = (x, y)
@@ -44,6 +49,14 @@ def draw_rectangle_Red(img, x, y, w, h, color):
     position = (((x + (x + w)) / 2), ((y + (y + h)) / 2))
     text = "red Ball x, y" + str(position)
     cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+    frame_center = (frame.shape[1] // 2, frame.shape[0] // 2)
+    # cv2.circle(frame, (frame.shape[1] //2, frame.shape[0] // 2),2, (255, 255, 255), 1)
+    distance = calculate_distance(position, frame_center)
+    return distance
+    
+    
+
+
 
 def draw_rectangle_blue(img, x, y, w, h, color):
     cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
@@ -53,9 +66,15 @@ def draw_rectangle_blue(img, x, y, w, h, color):
     position = (((x + (x + w)) / 2), ((y + (y + h)) / 2))
     text = "Blue Ball x, y" + str(position)
     cv2.putText(frame,"Blue" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+    frame_center = (frame.shape[1] // 2, frame.shape[0] // 2)
+    # cv2.circle(frame, (frame.shape[1] //2, frame.shape[0] // 2),2, (255, 255, 255), 1)
+    distance = calculate_distance(position, frame_center)
+    
+    # distance_list.append(distance)
+    # if distance ==  min(distance_list):
+    #     cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
 
-def calculate_distance(center1, center2):
-    return np.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
+
 
 def detect_circles(img):
     count = 0
@@ -83,6 +102,7 @@ def detect_circles(img):
         circles = np.uint16(np.around(circles))
         mask = np.zeros_like(gray)
         result = cv2.bitwise_and(frame, frame, mask=mask)
+        distance_list = []
         for i in circles[0, :]:
             
             
@@ -90,17 +110,21 @@ def detect_circles(img):
             cv2.circle(mask, (i[0], i[1]), i[2], 255, thickness=cv2.FILLED)
             if 0 <= i[0] < frame.shape[1] and 0 <= i[1] < frame.shape[0]:
                 center_pixel_color = frame[i[1], i[0]]
-                class_color = color_detect_blue(center_pixel_color) # color_detect_blue(center_pixel_color)
+                class_color = color_detect_red(center_pixel_color) # color_detect_blue(center_pixel_color)
                 print("RGB values at center of circle:", center_pixel_color, "Classified as:", class_color)
-            
                 if class_color == "Red": # "Blue"
+
                     count += 1
                     center = (i[0], i[1])
                     radius = i[2]
                     x, y = center[0] - radius, center[1] - radius
                     w, h = 2 * radius, 2 * radius
-                    draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
-                    # bottomLeftCornerOfText = (x, y)
+                    distance = draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
+                    
+                   
+                    
+
+                    
                     # text = "x,y" + str(bottomLeftCornerOfText)
                 if class_color == "Blue": # "Blue"
                     count += 1
@@ -109,10 +133,17 @@ def detect_circles(img):
                     x, y = center[0] - radius, center[1] - radius
                     w, h = 2 * radius, 2 * radius
                     draw_rectangle_blue(frame, x, y, w, h, (0, 0, 255))
+                
+                # if distance ==  min(distance_list):
+                #     cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 0, 255), 2)
+                    # bottomLeftCornerOfText = (x, y)
                     
                 
 
-
+                print(count)
+                for i in range(0, count):
+                    distance_list.append(distance)
+                print(distance_list)
                 red_intensity = center_pixel_color[2]
                 
                 if red_intensity > 200:
@@ -124,7 +155,11 @@ def detect_circles(img):
                 # w_max, h_max = 2 * radius_max, 2 * radius_max
                 # draw_rectangle(frame, x_max, y_max, w_max, h_max, (255, 255, 255))
                 
+                
+                        
         result = cv2.bitwise_and(frame, frame, mask=mask)
+    
+
     # cv2.putText(frame, f"total ={count}", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 255, 255), 5)
     # print("Maximum red intensity:", max_red_intensity)
     # print("Coordinates of the maximum red intensity pixel:", max_red_intensity_location)
