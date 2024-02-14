@@ -13,7 +13,7 @@ def color_detect_red(bgr):
     red_lower = np.array([0, 0, 100])
     red_upper = np.array([76, 54, 244]) 
 
-    purple_lower = np.array([80, 0, 80])
+    purple_lower = np.array([100, 0, 100])
     purple_upper = np.array([150, 90, 161])
 
     dist_to_red = np.linalg.norm(bgr - (red_lower + red_upper) / 2)
@@ -52,7 +52,7 @@ def draw_rectangle_Red(img, x, y, w, h, color):
     frame_center = (frame.shape[1] // 2, frame.shape[0] // 2)
     # cv2.circle(frame, (frame.shape[1] //2, frame.shape[0] // 2),2, (255, 255, 255), 1)
     distance = calculate_distance(position, frame_center)
-    return distance
+    return distance,position
     
     
 
@@ -77,6 +77,9 @@ def draw_rectangle_blue(img, x, y, w, h, color):
 
 
 def detect_circles(img):
+    distance_list = []
+    position_list = []
+    
     count = 0
     text = ""
     # bottomLeftCornerOfText = (0, 0)
@@ -102,7 +105,8 @@ def detect_circles(img):
         circles = np.uint16(np.around(circles))
         mask = np.zeros_like(gray)
         result = cv2.bitwise_and(frame, frame, mask=mask)
-        distance_list = []
+        # distance_list = []
+        # position_list = []
         for i in circles[0, :]:
             
             
@@ -119,8 +123,11 @@ def detect_circles(img):
                     radius = i[2]
                     x, y = center[0] - radius, center[1] - radius
                     w, h = 2 * radius, 2 * radius
-                    distance = draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
+                    distance,position = draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
+                    draw_rectangle_Red(frame, x, y, w, h, (0, 0, 255))
                     
+                    
+                
                    
                     
 
@@ -133,6 +140,17 @@ def detect_circles(img):
                     x, y = center[0] - radius, center[1] - radius
                     w, h = 2 * radius, 2 * radius
                     draw_rectangle_blue(frame, x, y, w, h, (0, 0, 255))
+
+                    if distance_list!= []:
+                        if distance ==  min(distance_list):
+                            print("distance",distance),print("position",position)
+                            index=distance_list.index(distance)
+                            position = position_list[index]
+                            pos = (int(position[0]), int(position[1]))
+                                #for i in position:
+                                #    pos.append(int(i))
+                            print(f"pos : {pos}")
+                            cv2.putText(frame,"near",pos,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
                 
                 # if distance ==  min(distance_list):
                 #     cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 0, 255), 2)
@@ -142,13 +160,33 @@ def detect_circles(img):
 
                 print(count)
                 for i in range(0, count):
-                    distance_list.append(distance)
-                print(distance_list)
-                red_intensity = center_pixel_color[2]
+                    if distance not in distance_list:
+                       
+                        distance_list.aSppend(distance)
+                        position_list.append(position)
+                if distance_list!= []:
+                        if distance ==  min(distance_list):
+                            print("distance",distance),print("position",position)
+                            index=distance_list.index(distance)
+                            position = position_list[index]
+                            pos = (int(position[0]), int(position[1]))
+                                #for i in position:
+                                #    pos.append(int(i))
+                            print(f"pos : {pos}")
+                            cv2.putText(frame,"near",pos,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+                #print(distance_list)
+                #print(position_list)
+    
+                        
                 
-                if red_intensity > 200:
-                    max_red_intensity = red_intensity
+            red_intensity = center_pixel_color[2]
+                
+            if red_intensity > 200:
+                max_red_intensity = red_intensity
+                try:
                     max_red_intensity_location = (i[0], i[1])
+                except:
+                    pass
                 # center_max = (i[0], i[1])
                 # radius_max= i[2]
                 # x_max, y_max = center_max[0] - radius_max, center_max[1] - radius_max
@@ -190,6 +228,7 @@ while True:
         
     # detect_circles(frame)
     mask, count, text = detect_circles(frame)
+
     cv2.putText(frame, f"total ={count}", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 255, 255), 5)
     
     # cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
