@@ -4,26 +4,23 @@
 #include "pio_encoder.h"
 
 //Timer Interrupt Setup
-#define dt_us 1000  //Edit Here
+#define dt_us 2400  //Edit Here
 float deltaT = dt_us / 1.0e6;
 RPI_PICO_Timer Timer(0);
 bool TimerStatus = false;
 
 //Edit Here
 //Motor Setup
-Motor FL(0, 4, 5, 30000, 100, 0);
-Motor FR(14, 2, 3, 30000, 100, 0);
-Motor BL(18, 6, 7, 30000, 100, 0);
-Motor BR(16, 8, 9, 30000, 100, 0);
+Motor FL(8, 20, 21, 17000, 100, 100);
+Motor FR(6, 10, 11, 17000, 100, 100);
+Motor BL(4, 14, 15, 17000, 100, 100);
+Motor BR(2, 12, 13, 17000, 100, 100);
 //Edit Here
 
-//Edit Here
-float wheelDiameter = 0.1;
-float lx = 0.2;
-float ly = 0.2;
+float wheelDiameter = 0.127;
+float lx = 0.26;
+float ly = 0.432;
 Kinematics kinematics(wheelDiameter, lx, ly);
-//Edit Here
-
 
 //For test purpose
 //variable
@@ -63,10 +60,19 @@ void loop() {
 
 bool TimerHandler(struct repeating_timer* t) {
   (void)t;
+  // FL.compute(60, deltaT);
+  // Serial.print(" ");
+  // FR.compute(60, deltaT);
+  // Serial.print(" ");
+  // BL.compute(60, deltaT);
+  // Serial.print(" ");
+  // BR.compute(60, deltaT);
+  // Serial.println();
 
   // if (Serial.available()) {
   //   String data = Serial.readStringUntil('\n');
   //   // Serial.print("Received data: ");
+
   //   // Serial.println(data);
 
   //   int firstSemiColon = data.indexOf(';');
@@ -91,8 +97,10 @@ bool TimerHandler(struct repeating_timer* t) {
 
   //For test purpose
   TransformStep steps[] = {
-    { 0, 0.15, 0, 10000 },
-    { 0, -0.15, 0, 10000 }
+    // { 7, 0, 0, 1000 },
+    { 5, 0, 0, 2500 },
+    {0,0,0,1000},
+    { 0, 0, 4, 2500 }
   };
 
   T = millis();
@@ -103,12 +111,14 @@ bool TimerHandler(struct repeating_timer* t) {
       FR.compute(wheelSpeeds.radps_fr, deltaT);
       BL.compute(wheelSpeeds.radps_bl, deltaT);
       BR.compute(wheelSpeeds.radps_br, deltaT);
+      Serial.println();
     } else {
       Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
       FL.compute(wheelSpeeds.radps_fl, deltaT);
       FR.compute(wheelSpeeds.radps_fr, deltaT);
       BL.compute(wheelSpeeds.radps_bl, deltaT);
       BR.compute(wheelSpeeds.radps_br, deltaT);
+      Serial.println();
       start_time = millis();
       currentStep++;
     }
@@ -118,6 +128,7 @@ bool TimerHandler(struct repeating_timer* t) {
     FR.compute(wheelSpeeds.radps_fr, deltaT);
     BL.compute(wheelSpeeds.radps_bl, deltaT);
     BR.compute(wheelSpeeds.radps_br, deltaT);
+    Serial.println();
     currentStep = 10000;
   }
   //For test purpose
