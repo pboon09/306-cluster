@@ -34,11 +34,11 @@ void setup() {
   ballShooter.servo();
   ballShooter.wheel();
   delay(1000);
-  while (digitalRead(BallShooter::limit_switch) == 1) {
+  while (digitalRead(BallShooter::limit_switch) == 1) {      //Need to use getter setter because its private.
     ballShooter.stepper_cw();
   }
   ballShooter.wheel_stop();
-  if (digitalRead(BallShooter::limit_switch) == 0) {
+  if (digitalRead(BallShooter::limit_switch) == 0) {  //Need to use getter setter because its private.
     ballShooter.stepper_stop();
     ballShooter.stepper_ccw();
   }
