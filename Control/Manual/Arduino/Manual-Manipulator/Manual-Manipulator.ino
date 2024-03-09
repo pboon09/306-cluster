@@ -23,7 +23,10 @@ void setup() {
   seedHarvester.linearDrive(455, Ldir);
   seedHarvester.grabbing();
   delay(5000);  // comment this line
-  //Release Button
+  //Release Button 
+
+  // More specific with the command. what dose x do? what dose B,A,Y do?
+  
   seedHarvester.release();
 
   // Example usage for joystick
