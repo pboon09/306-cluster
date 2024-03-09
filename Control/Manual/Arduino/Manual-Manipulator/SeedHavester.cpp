@@ -5,7 +5,7 @@ SeedHarvester::SeedHarvester(int gpin, int lfpin, int limitpin) {
     gpin_ = gpin;
     lfpin_ = lfpin;
     limitpin_ = limitpin;
-    pinMode(dir_pin, OUTPUT);
+    pinMode(dir_pin, OUTPUT);            //unknow varieble because its not in this file!! (there are more than this please check)
     pinMode(step_pin, OUTPUT);
     pinMode(limitpin_, INPUT_PULLUP);
     GrabServo.attach(gpin_);
