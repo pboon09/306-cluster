@@ -1,5 +1,7 @@
 #include "SeedHarvester.h"
 #include <Arduino.h>
+Servo GrabServo;
+Servo LiftServo;
 
 SeedHarvester::SeedHarvester(int gpin, int lfpin, int limitpin) {
     gpin_ = gpin;

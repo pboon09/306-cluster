@@ -25,6 +25,11 @@ private:
     int manual_lock_dis = 470;
 
     int n_release = 0;
+    int dir_pin = 17, step_pin = 16;
+
+    bool Ldir = LOW, Rdir = HIGH;
+
+    int grbAng = 10;
 };
 
 #endif // SEEDHARVESTER_H
