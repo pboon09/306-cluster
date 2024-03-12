@@ -40,19 +40,19 @@ void SeedHarvester::setZero() {
 }
 
 void SeedHarvester::grabbing() {
-    GrabServo.write(0);
-    delay(1000);
-    LiftServo.writeMicroseconds(3000);
-    delay(1200);
-    LiftServo.writeMicroseconds(1499);
-    delay(500);
+    GrabServo.write(grbAng);
+      delay(1000); 
+      LiftServo.write(180);
+      delay(1400); 
+      LiftServo.write(92);
+      delay(500);
 }
 
 void SeedHarvester::release() {
-    LiftServo.writeMicroseconds(0);
-    delay(1000);
-    LiftServo.writeMicroseconds(1499);
-    delay(1000);
+    LiftServo.write(0);
+    delay(1000); // Wait for 1 second
+    LiftServo.write(92);
+    delay(1000); // Wait for 1 second
     GrabServo.write(180);
     delay(500);
 }
@@ -79,10 +79,10 @@ void SeedHarvester::singleHarvest_locking(){
         grabbing();
         linearDrive(manual_lock_dis - gap,Rdir);
 
-        LiftServo.writeMicroseconds(0);
+        LiftServo.write(0);
         delay(100); 
-        LiftServo.writeMicroseconds(1499);
-        delay(200); 
+        LiftServo.write(92);
+        delay(200);
         
         manual_lock_dis = manual_lock_dis - gap;
         storage = storage + 1;
@@ -95,10 +95,10 @@ void SeedHarvester::singleHarvest_locking(){
         grabbing();
         setZero();
         
-        LiftServo.writeMicroseconds(0);
+        LiftServo.write(0);
         delay(100); 
-        LiftServo.writeMicroseconds(1499);
-        delay(200); 
+        LiftServo.write(92);
+        delay(200);
         
         storage = storage + 1;
       }
@@ -111,9 +111,9 @@ void SeedHarvester::singleRelease(){
       if (storage == 1){
         setZero();
 
-        LiftServo.writeMicroseconds(3000);
-        delay(350); // Wait for 1 second
-        LiftServo.writeMicroseconds(1499);
+        LiftServo.write(180);
+        delay(350); 
+        LiftServo.write(92);
         delay(500);
         
         linearDrive(manual_lock_dis,Ldir);
@@ -132,9 +132,9 @@ void SeedHarvester::singleRelease(){
         storage = storage - 1;
       }
       else{
-        LiftServo.writeMicroseconds(3000);
-        delay(350); // Wait for 1 second
-        LiftServo.writeMicroseconds(1499);
+        LiftServo.write(180);
+        delay(350); 
+        LiftServo.write(92);
         delay(500);
         
         linearDrive(manual_lock_dis,Ldir);

@@ -15,21 +15,21 @@ public:
     void singleRelease();
 
 private:
-     int gap = 75; //distance between seed
+     int gap = 80; //distance between seed
 
     int gpin_; // grabber pin (servo)
     int lfpin_; // lifter pin (servo)
     int limitpin_; // limit pin
 
     int storage = 0;
-    int manual_lock_dis = 470;
+    int manual_lock_dis = 455;
 
     int n_release = 0;
     int dir_pin = 17, step_pin = 16;
 
     bool Ldir = LOW, Rdir = HIGH;
 
-    int grbAng = 10;
+    int grbAng = 5;
 };
 
 #endif // SEEDHARVESTER_H
