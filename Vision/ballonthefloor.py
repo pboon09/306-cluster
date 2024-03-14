@@ -162,7 +162,7 @@ def detect_circles(img):
                 for i in range(0, count):
                     if distance not in distance_list:
                        
-                        distance_list.aSppend(distance)
+                        distance_list.append(distance)
                         position_list.append(position)
                 if distance_list!= []:
                         if distance ==  min(distance_list):
@@ -216,6 +216,7 @@ def detect_circles(img):
 
 # detect_circles('20231010_161302.jpg')
 cap = cv2.VideoCapture(0)  
+cap = cv2.VideoCapture("D:\\download\\ballonthefloorclip.mov")
 cap.set(cv2.CAP_PROP_EXPOSURE, 2) 
 while True:
     ret, frame = cap.read() 
@@ -229,7 +230,7 @@ while True:
     # detect_circles(frame)
     mask, count, text = detect_circles(frame)
 
-    cv2.putText(frame, f"total ={count}", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 255, 255), 5)
+    cv2.putText(frame, f"total ={count}", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 255), 5)
     
     # cv2.putText(frame,"red" +text,bottomLeftCornerOfText,cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
     cv2.imshow('frame circles', frame)
