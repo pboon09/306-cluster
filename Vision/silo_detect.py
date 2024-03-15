@@ -68,7 +68,7 @@ while True:
     ret, frame = cap.read()
     H, W = frame.shape[:2]
     # print(H, W)
-    #1080 1920
+    # 1080 1920
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
