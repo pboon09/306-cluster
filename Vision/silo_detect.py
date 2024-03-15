@@ -3,6 +3,7 @@ import numpy as np
 import imutils
 
 cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("D:\\download\\ballonthefloorclip.mov")
 # image = cv2.imread('IMG_8401.jpg')
 
 
