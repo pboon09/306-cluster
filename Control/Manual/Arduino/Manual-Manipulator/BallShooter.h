@@ -5,7 +5,7 @@
 
 class BallShooter {
 public:
-    BallShooter();
+    BallShooter(int servoPin, int limitSwitchPin, int INA, int INB, int wheel1Pin, int wheel2Pin, int stepPin, int dirPin);
     void servo();
     void limitswitch();
     void stepper_cw();
@@ -17,16 +17,16 @@ public:
     void wheel_stop();
 
 private:
-    static const int servoPin = 2;
-    static const int limit_switch = 3;
-    static const int motor1 = 4;
-    static const int motor2 = 5;
-    static const int wheel1 = 8;
-    static const int wheel2 = 9;
-    static const int stepPin = 18;
-    static const int dirPin = 19;
-    static const int stepsPerRevolution = 200;
     Servo s;
+    int servoPin_;
+    int limitSwitchPin_;
+    int INA_;
+    int INB_;
+    int wheel1Pin_;
+    int wheel2Pin_;
+    int stepPin_;
+    int dirPin_;
+    static const int stepsPerRevolution = 200;
 };
 
 #endif // BALL_SHOOTER_H
