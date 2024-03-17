@@ -60,6 +60,27 @@ void loop() {
 
 bool TimerHandler(struct repeating_timer* t) {
   (void)t;
+  //1. Find Max m/s
+  //2. Try New Filter / Low Pass with other Frequency
+
+  FL.FindSpeedFromPWM(62500, deltaT);
+  FR.FindSpeedFromPWM(62500, deltaT);
+  BL.FindSpeedFromPWM(62500, deltaT);
+  BR.FindSpeedFromPWM(62500, deltaT);
+  Serial.println();
+
+  FL.TryFilter(62500, deltaT);
+  FR.TryFilter(62500, deltaT);
+  BL.TryFilter(62500, deltaT);
+  BR.TryFilter(62500, deltaT);
+  Serial.println();
+
+  Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
+  FL.setSpeed(map(wheelSpeeds.radps_fl, -6, 6, -62500, 62500));
+  FR.setSpeed(map(wheelSpeeds.radps_fr, -6, 6, -62500, 62500));
+  BL.setSpeed(map(wheelSpeeds.radps_bl, -6, 6, -62500, 62500));
+  BR.setSpeed(map(wheelSpeeds.radps_br, -6, 6, -62500, 62500));
+
   // FL.compute(60, deltaT);
   // Serial.print(" ");
   // FR.compute(60, deltaT);
@@ -95,43 +116,43 @@ bool TimerHandler(struct repeating_timer* t) {
   // BL.compute(wheelSpeeds.radps_bl, deltaT);
   // BR.compute(wheelSpeeds.radps_br, deltaT);
 
-  //For test purpose
-  TransformStep steps[] = {
-    // { 7, 0, 0, 1000 },
-    { 5, 0, 0, 2500 },
-    {0,0,0,1000},
-    { 0, 0, 4, 2500 }
-  };
+  // //For test purpose
+  // TransformStep steps[] = {
+  //   // { 7, 0, 0, 1000 },
+  //   { 5, 0, 0, 2500 },
+  //   {0,0,0,1000},
+  //   { 0, 0, 4, 2500 }
+  // };
 
-  T = millis();
-  if (currentStep < sizeof(steps) / sizeof(steps[0])) {
-    if (T - start_time < steps[currentStep].duration) {
-      Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(steps[currentStep].vx, steps[currentStep].vy, steps[currentStep].wz);
-      FL.compute(wheelSpeeds.radps_fl, deltaT);
-      FR.compute(wheelSpeeds.radps_fr, deltaT);
-      BL.compute(wheelSpeeds.radps_bl, deltaT);
-      BR.compute(wheelSpeeds.radps_br, deltaT);
-      Serial.println();
-    } else {
-      Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
-      FL.compute(wheelSpeeds.radps_fl, deltaT);
-      FR.compute(wheelSpeeds.radps_fr, deltaT);
-      BL.compute(wheelSpeeds.radps_bl, deltaT);
-      BR.compute(wheelSpeeds.radps_br, deltaT);
-      Serial.println();
-      start_time = millis();
-      currentStep++;
-    }
-  } else {
-    Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
-    FL.compute(wheelSpeeds.radps_fl, deltaT);
-    FR.compute(wheelSpeeds.radps_fr, deltaT);
-    BL.compute(wheelSpeeds.radps_bl, deltaT);
-    BR.compute(wheelSpeeds.radps_br, deltaT);
-    Serial.println();
-    currentStep = 10000;
-  }
-  //For test purpose
+  // T = millis();
+  // if (currentStep < sizeof(steps) / sizeof(steps[0])) {
+  //   if (T - start_time < steps[currentStep].duration) {
+  //     Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(steps[currentStep].vx, steps[currentStep].vy, steps[currentStep].wz);
+  //     FL.compute(wheelSpeeds.radps_fl, deltaT);
+  //     FR.compute(wheelSpeeds.radps_fr, deltaT);
+  //     BL.compute(wheelSpeeds.radps_bl, deltaT);
+  //     BR.compute(wheelSpeeds.radps_br, deltaT);
+  //     Serial.println();
+  //   } else {
+  //     Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
+  //     FL.compute(wheelSpeeds.radps_fl, deltaT);
+  //     FR.compute(wheelSpeeds.radps_fr, deltaT);
+  //     BL.compute(wheelSpeeds.radps_bl, deltaT);
+  //     BR.compute(wheelSpeeds.radps_br, deltaT);
+  //     Serial.println();
+  //     start_time = millis();
+  //     currentStep++;
+  //   }
+  // } else {
+  //   Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
+  //   FL.compute(wheelSpeeds.radps_fl, deltaT);
+  //   FR.compute(wheelSpeeds.radps_fr, deltaT);
+  //   BL.compute(wheelSpeeds.radps_bl, deltaT);
+  //   BR.compute(wheelSpeeds.radps_br, deltaT);
+  //   Serial.println();
+  //   currentStep = 10000;
+  // }
+  // //For test purpose
 
   return true;
 }

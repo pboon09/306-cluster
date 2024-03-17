@@ -10,6 +10,7 @@ public:
   void setSpeed(int speed);                                                          // Set the speed of the motor
   void stop();                                                                       // Stop the motor
   void compute(float setPoint_RPM, float deltaTime);                                 // Compute the PID and update speed
+  void TryFilter(float setPoint_RPM, float deltaTime);     
   void FindSpeedFromPWM(float pwm, float deltaTime);
   void setKP(float kp);                                                              // Set the Proportional gain
   void setKI(float ki);                                                              // Set the Integral gain
@@ -26,6 +27,7 @@ private:
   float _vPrev;
   float _error, _lastError, _integral;
   int _prevCount = 0;
+  const float _alpha = 0.1; //Closer to 0 more smmoth but slow
 };
 
 #endif

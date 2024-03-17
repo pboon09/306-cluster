@@ -33,16 +33,16 @@ Kinematics::RadPS Kinematics::Inverse_Kinematics(float vx, float vy, float wz) {
   return wheel_rads;
 }
 
-// Kinematics::Position Kinematics::Forward_Kinematics_Position(float radps_fl, float radps_fr, float radps_bl, float radps_br, Position current_position, float deltaTime) {
-//   Velocity basev = Forward_Kinematics_Velocity(radps_fl, radps_fr, radps_bl, radps_br);
-//   current_position.x += basev.vx * deltaTime;
-//   current_position.y += basev.vy * deltaTime;
-//   current_position.theta += basev.wz * deltaTime * (180.0 / M_PI);
-//   current_position.theta = fmod(current_position.theta, 360.0);
+Kinematics::Position Kinematics::Forward_Kinematics_Position(float radps_fl, float radps_fr, float radps_bl, float radps_br, Position current_position, float deltaTime) {
+  Velocity basev = Forward_Kinematics_Velocity(radps_fl, radps_fr, radps_bl, radps_br);
+  current_position.x += basev.vx * deltaTime;
+  current_position.y += basev.vy * deltaTime;
+  current_position.theta += basev.wz * deltaTime * (180.0 / M_PI);
+  current_position.theta = fmod(current_position.theta, 360.0);
 
-//   if (current_position.theta < 0) {
-//     current_position.theta += 360.0;
-//   }
+  if (current_position.theta < 0) {
+    current_position.theta += 360.0;
+  }
 
-//   return current_position;
-// }
+  return current_position;
+}

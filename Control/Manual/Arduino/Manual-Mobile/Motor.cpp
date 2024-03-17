@@ -40,12 +40,11 @@ void Motor::compute(float setPoint_RPM, float deltaTime) {
     float P = _kp * _error;
     float I = _ki * _integral;
     float D = _kd * (_error - _lastError) / deltaTime;
+
     if (_error == 0) {
       I = 0;
     }
-    if (I > 62500) {
-      I = 62500;
-    }
+    I = std::min(std::max(I, -62500.0f), 62500.0f);
     _u = P + I + D;
 
     _u = std::max(std::min(_u, 62500.0f), -62500.0f);
@@ -66,19 +65,34 @@ void Motor::compute(float setPoint_RPM, float deltaTime) {
   }
 }
 
-void Motor::FindSpeedFromPWM(float pwm, float deltaTime) {
+void Motor::TryFilter(float pwm, float deltaTime) {
   int pos = encoder.getCount();
   float velocity = (pos - _prevCount) / deltaTime;
-  _v = velocity / 980 * 60;                                              //edit here
-  _vFilt = 0.96906992 * _vFilt + 0.01546504 * _v + 0.01546504 * _vPrev;  //edit here
+  _v = velocity / 980 * 60;
+  _vFilt = _alpha * _v + (1 - _alpha) * _vFilt;
 
   setSpeed(pwm);
 
-  Serial.print(_v);
-  Serial.print(" ");
+  // Serial.print(_v);
+  // Serial.print(" ");
   Serial.print(_vFilt);
   Serial.print(" ");
 
+  _prevCount = pos;
+}
+
+void Motor::FindSpeedFromPWM(float pwm, float deltaTime) {
+  int pos = encoder.getCount();
+  float velocity = (pos - _prevCount) / deltaTime;
+  _v = velocity / 980 * 60;
+  _vFilt = 0.96906992 * _vFilt + 0.01546504 * _v + 0.01546504 * _vPrev;
+
+  setSpeed(pwm);
+
+  // Serial.print(_v);
+  // Serial.print(" ");
+  Serial.print(_vFilt);
+  Serial.print(" ");
 
   _vPrev = _v;
   _prevCount = pos;
