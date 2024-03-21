@@ -11,15 +11,15 @@ bool TimerStatus = false;
 
 //Edit Here
 //Motor Setup
-Motor FL(8, 20, 21, 17000, 100, 100);
-Motor FR(6, 10, 11, 17000, 100, 100);
-Motor BL(4, 14, 15, 17000, 100, 100);
-Motor BR(2, 12, 13, 17000, 100, 100);
+Motor FL(8, 14, 15, 17000, 100, 100);  //correct encode pin
+Motor FR(6, 10, 11, 17000, 100, 100);  //wrong encode pin
+Motor BL(4, 20, 21, 17000, 100, 100);  //wrong encode pin
+Motor BR(2, 12, 13, 17000, 100, 100);  //wrong encode pin
 //Edit Here
 
 float wheelDiameter = 0.127;
-float lx = 0.26;
-float ly = 0.432;
+float ly = 0.26;
+float lx = 0.432;
 Kinematics kinematics(wheelDiameter, lx, ly);
 
 //For test purpose
@@ -60,99 +60,39 @@ void loop() {
 
 bool TimerHandler(struct repeating_timer* t) {
   (void)t;
-  //1. Find Max m/s
-  //2. Try New Filter / Low Pass with other Frequency
-
-  FL.FindSpeedFromPWM(62500, deltaT);
-  FR.FindSpeedFromPWM(62500, deltaT);
-  BL.FindSpeedFromPWM(62500, deltaT);
-  BR.FindSpeedFromPWM(62500, deltaT);
-  Serial.println();
-
-  FL.TryFilter(62500, deltaT);
-  FR.TryFilter(62500, deltaT);
-  BL.TryFilter(62500, deltaT);
-  BR.TryFilter(62500, deltaT);
-  Serial.println();
-
-  Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
-  FL.setSpeed(map(wheelSpeeds.radps_fl, -6, 6, -62500, 62500));
-  FR.setSpeed(map(wheelSpeeds.radps_fr, -6, 6, -62500, 62500));
-  BL.setSpeed(map(wheelSpeeds.radps_bl, -6, 6, -62500, 62500));
-  BR.setSpeed(map(wheelSpeeds.radps_br, -6, 6, -62500, 62500));
-
-  // FL.compute(60, deltaT);
+  //debug part
+  // Kinematics::Velocity speed = kinematics.Forward_Kinematics_Velocity(138, -138, 138, -138);
+  // Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 1);
+  // Serial.print(speed.vx);
   // Serial.print(" ");
-  // FR.compute(60, deltaT);
+  // Serial.print(speed.vy);
   // Serial.print(" ");
-  // BL.compute(60, deltaT);
+  // Serial.print(speed.wz);
   // Serial.print(" ");
-  // BR.compute(60, deltaT);
+  // Serial.print(wheelSpeeds.radps_fl);
+  // Serial.print(" ");
+  // Serial.print(wheelSpeeds.radps_fr);
+  // Serial.print(" ");
+  // Serial.print(wheelSpeeds.radps_bl);
+  // Serial.print(" ");
+  // Serial.print(wheelSpeeds.radps_br);
+  // Serial.println(" ");
+
+  // FL.setSpeed(10000);
+  // FR.setSpeed(10000);
+  // BL.setSpeed(10000);
+  // BR.setSpeed(10000);
+
+  // FL.FindSpeedFromPWM(62500, deltaT);
+  // FR.FindSpeedFromPWM(62500, deltaT);
+  // BL.FindSpeedFromPWM(62500, deltaT);
+  // BR.FindSpeedFromPWM(62500, deltaT);
   // Serial.println();
 
-  // if (Serial.available()) {
-  //   String data = Serial.readStringUntil('\n');
-  //   // Serial.print("Received data: ");
-
-  //   // Serial.println(data);
-
-  //   int firstSemiColon = data.indexOf(';');
-  //   int secondSemiColon = data.indexOf(';', firstSemiColon + 1);
-
-  //   vx = data.substring(0, firstSemiColon);
-  //   vy = data.substring(firstSemiColon + 1, secondSemiColon);
-  //   wz = data.substring(secondSemiColon + 1);
-
-  //   Serial.print("Parsed X: ");
-  //   Serial.print(strToFloat(vx));
-  //   Serial.print(" Y: ");
-  //   Serial.print(strToFloat(vy));
-  //   Serial.print(" Z: ");
-  //   Serial.println(strToFloat(wz));
-  // }
-  // Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(vx, vy, wz);
-  // FL.compute(wheelSpeeds.radps_fl, deltaT);
-  // FR.compute(wheelSpeeds.radps_fr, deltaT);
-  // BL.compute(wheelSpeeds.radps_bl, deltaT);
-  // BR.compute(wheelSpeeds.radps_br, deltaT);
-
-  // //For test purpose
-  // TransformStep steps[] = {
-  //   // { 7, 0, 0, 1000 },
-  //   { 5, 0, 0, 2500 },
-  //   {0,0,0,1000},
-  //   { 0, 0, 4, 2500 }
-  // };
-
-  // T = millis();
-  // if (currentStep < sizeof(steps) / sizeof(steps[0])) {
-  //   if (T - start_time < steps[currentStep].duration) {
-  //     Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(steps[currentStep].vx, steps[currentStep].vy, steps[currentStep].wz);
-  //     FL.compute(wheelSpeeds.radps_fl, deltaT);
-  //     FR.compute(wheelSpeeds.radps_fr, deltaT);
-  //     BL.compute(wheelSpeeds.radps_bl, deltaT);
-  //     BR.compute(wheelSpeeds.radps_br, deltaT);
-  //     Serial.println();
-  //   } else {
-  //     Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
-  //     FL.compute(wheelSpeeds.radps_fl, deltaT);
-  //     FR.compute(wheelSpeeds.radps_fr, deltaT);
-  //     BL.compute(wheelSpeeds.radps_bl, deltaT);
-  //     BR.compute(wheelSpeeds.radps_br, deltaT);
-  //     Serial.println();
-  //     start_time = millis();
-  //     currentStep++;
-  //   }
-  // } else {
-  //   Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);
-  //   FL.compute(wheelSpeeds.radps_fl, deltaT);
-  //   FR.compute(wheelSpeeds.radps_fr, deltaT);
-  //   BL.compute(wheelSpeeds.radps_bl, deltaT);
-  //   BR.compute(wheelSpeeds.radps_br, deltaT);
-  //   Serial.println();
-  //   currentStep = 10000;
-  // }
-  // //For test purpose
-
+  Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);  //Set Joy to 0.92 0.92 1.33
+  FL.setSpeed(map(wheelSpeeds.radps_fl, -138, 138, -62500, 62500));
+  FR.setSpeed(map(wheelSpeeds.radps_fr, -138, 138, -62500, 62500));
+  BL.setSpeed(map(wheelSpeeds.radps_bl, -138, 138, -62500, 62500));
+  BR.setSpeed(map(wheelSpeeds.radps_br, -138, 138, -62500, 62500));
   return true;
 }
