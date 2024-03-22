@@ -18,8 +18,8 @@ Motor BR(2, 12, 13, 17000, 100, 100);  //wrong encode pin
 //Edit Here
 
 float wheelDiameter = 0.127;
-float ly = 0.26;
-float lx = 0.432;
+float lx = 0.26/2;
+float ly = 0.432/2;
 Kinematics kinematics(wheelDiameter, lx, ly);
 
 //For test purpose
@@ -61,14 +61,14 @@ void loop() {
 bool TimerHandler(struct repeating_timer* t) {
   (void)t;
   //debug part
-  // Kinematics::Velocity speed = kinematics.Forward_Kinematics_Velocity(138, -138, 138, -138);
-  // Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 1);
+  // Kinematics::Velocity speed = kinematics.Forward_Kinematics_Velocity(-138, 138, -138, 138);
+  // Kinematics::RPM wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 1);
   // Serial.print(speed.vx);
   // Serial.print(" ");
   // Serial.print(speed.vy);
   // Serial.print(" ");
   // Serial.print(speed.wz);
-  // Serial.print(" ");
+  // Serial.println(" ");
   // Serial.print(wheelSpeeds.radps_fl);
   // Serial.print(" ");
   // Serial.print(wheelSpeeds.radps_fr);
@@ -89,10 +89,10 @@ bool TimerHandler(struct repeating_timer* t) {
   // BR.FindSpeedFromPWM(62500, deltaT);
   // Serial.println();
 
-  Kinematics::RadPS wheelSpeeds = kinematics.Inverse_Kinematics(0, 0, 0);  //Set Joy to 0.92 0.92 1.33
-  FL.setSpeed(map(wheelSpeeds.radps_fl, -138, 138, -62500, 62500));
-  FR.setSpeed(map(wheelSpeeds.radps_fr, -138, 138, -62500, 62500));
-  BL.setSpeed(map(wheelSpeeds.radps_bl, -138, 138, -62500, 62500));
-  BR.setSpeed(map(wheelSpeeds.radps_br, -138, 138, -62500, 62500));
+  Kinematics::RPM wheelSpeeds = kinematics.Inverse_Kinematics(1, 1, 1);  //Set Joy to 0.92 0.92 2.65
+  FL.setSpeed(map(wheelSpeeds.RPM_FL, -138, 138, -62500, 62500));
+  FR.setSpeed(map(wheelSpeeds.RPM_FR, -138, 138, -62500, 62500));
+  BL.setSpeed(map(wheelSpeeds.RPM_BL, -138, 138, -62500, 62500));
+  BR.setSpeed(map(wheelSpeeds.RPM_BR, -138, 138, -62500, 62500));
   return true;
 }
