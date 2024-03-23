@@ -3,7 +3,7 @@ from rclpy.node import Node
 
 # from joy_stick_lib import JoystickHandler
 
-from std_msgs.msg import String
+from std_msgs.msg import Float32MultiArray
 
 import pygame
 import sys
@@ -31,7 +31,7 @@ class JoystickHandler:
         for i in range(len(axes)):
             if axes[i] > 0.97: axes[i] = 1.00
             elif axes[i] < -0.97: axes[i] = -1.00
-            elif axes[i] < 0.03 and axes[i] > -0.03: axes[i] = 0
+            elif axes[i] < 0.08 and axes[i] > -0.08: axes[i] = 0
             if i == 1 or i == 3:
                 axes[i] = axes[i] * -1
         return axes
@@ -63,26 +63,26 @@ class JoystickHandler:
             if int(buttons_state[i]) == 1:
                 bfunc = i+1
 
-        process_output = str(axes[0])+":"+str(axes[1])+":"+str(axes[2])+":"+str(bfunc)
-        print(process_output)
+        process_output = [float(axes[1]),float(axes[0]),float(axes[3]),float(bfunc)]
+        # print(process_output)
         return process_output
     
 class JoyStickNode(Node):
 
     def __init__(self):
         super().__init__('JoyStickNode')
-        self.publisher_joy_data_ = self.create_publisher(String, '/joy_data', 10)
+        self.publisher_joy_data_ = self.create_publisher(Float32MultiArray, '/joy_data', 10)
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.joystick_handler = JoystickHandler()
 
     def timer_callback(self):
 
-        joy_data = self.joystick_handler.get_all()
-        msg = String()
+        joy_data = self.joystick_handler.process_input()
+        msg = Float32MultiArray()
         msg.data = joy_data;
         self.publisher_joy_data_.publish(msg)
-        self.get_logger().info('Publishing: "%s"' % msg.data)
+        # self.get_logger().info('Publishing: "%s"' % msg.data)
 
 
 def main(args=None):
